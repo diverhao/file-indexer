@@ -15,6 +15,8 @@ if (configFileName === undefined) {
  */
 const files: string[] = [];
 let webServerPort: number = 4000;
+let indexPeriod: number = 86400;
+let excludes: string[] = [];
 
 /**
  * Read all files in config
@@ -27,13 +29,15 @@ const readFolders = () => {
         const config = JSON.parse(configFileStr);
         const folders = config["folders"];
         webServerPort = config["port"];
+        indexPeriod =  config["indexPeriod"];
+        excludes = config["excludes"];
 
         // empty files
         files.length = 0;
 
         // read each folders defined in config
         for (const fullPath of folders) {
-            const reader = new FolderReader(fullPath);
+            const reader = new FolderReader(fullPath, excludes);
             try {
                 const filesInFolder = reader.read();
                 files.push(...filesInFolder);
@@ -45,13 +49,15 @@ const readFolders = () => {
     } catch (e) {
         console.log(e);
     }
+    console.log("Server port:", webServerPort);
+    console.log("Index period", indexPeriod, "seconds");
     console.log("Indexed", files.length, "files");
 }
 
 readFolders();
 setInterval(() => {
     readFolders();
-}, 86400 * 1000)
+}, indexPeriod * 1000)
 
 const webServer = new WebServer(files, webServerPort);
 webServer.start()

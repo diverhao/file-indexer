@@ -1,6 +1,10 @@
 {
     "port": 4000,
+    "indexPeriod": 86400,
     "folders": [
-        "/Users/1h7/Desktop"
+
+    ],
+    "exludes": [
+        
     ]
 }

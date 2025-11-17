@@ -6,8 +6,10 @@ export class FolderReader {
     private _result: string[] = [];
     private _sizeThreashold = 1024 * 1024 * 500; // 500 MB
     private _rootPath: string;
-    constructor(rootPath: string) {
+    private _exludes: string[] = [];
+    constructor(rootPath: string, exludes: string[]) {
         this._rootPath = rootPath;
+        this._exludes = exludes;
     }
 
     read = () => {
@@ -19,6 +21,9 @@ export class FolderReader {
      * Read one folder 
      */
     private _readFolder = (fullPath: string) => {
+        if (this.getExcludes().includes(fullPath)) {
+            return;
+        }
         const dirContent = readdirSync(fullPath);
         for (const childPath of dirContent) {
             const childFullPath = join(fullPath, childPath);
@@ -50,5 +55,9 @@ export class FolderReader {
 
     getRootPath = () => {
         return this._rootPath;
+    }
+
+    getExcludes = () => {
+        return this._exludes;
     }
 }
